@@ -17,6 +17,8 @@ app.use('/api/posts', require('./routes/api/posts'));
 app.use('/api/profile', require('./routes/api/profile'));
 app.use('/api/users', require('./routes/api/users'));
 
+// Set the port to env variable, or default to 3001
 const PORT = process.env.PORT || 3001;
 
+// Start listening for requests...
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
