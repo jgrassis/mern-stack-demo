@@ -139,7 +139,7 @@ router.get('/user/:user_id', async (req, res) => {
   }
 });
 
-// @route   DELETE api/profile/user/:user_id
+// @route   DELETE api/profile/user/
 // @desc    Delete Profile, User, and Posts by User Id
 // @access  Private
 router.delete('/', auth, async (req, res) => {
@@ -162,6 +162,69 @@ router.delete('/', auth, async (req, res) => {
     if (err.kind === 'ObjectId') {
       return res.status(400).json({ msg: 'Profile not found' });
     }
+    res.sendStatus(500);
+  }
+});
+
+// @route   PUT api/profile/experience
+// @desc    Add Experience to Profile
+// @access  Private
+router.put(
+  '/experience',
+  [
+    [
+      check('title', 'Title is required').not().isEmpty(),
+      check('company', 'Company is required').not().isEmpty(),
+      check('from', 'From Date is required').not().isEmpty(),
+    ],
+    auth,
+  ],
+  async (req, res) => {
+    // Check for errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { title, company, location, from, to, current, description } =
+      req.body;
+
+    const newExperience = {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description,
+    };
+
+    try {
+      const profile = await Profile.findOne({ user: req.user.id });
+      profile.experience.unshift(newExperience);
+      await profile.save();
+      res.json(profile);
+    } catch (err) {
+      console.log(err);
+      res.sendStatus(500);
+    }
+  }
+);
+
+// @route   DELETE api/profile/experience/:exp_id
+// @desc    Delete Experience from Profile
+// @access  Private
+router.delete('/experience/:exp_id', auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+    const exp = profile.experience;
+    profile.experience = exp.filter((exp) => {
+      return exp.id !== req.params.exp_id;
+    });
+    await profile.save();
+    res.json(profile);
+  } catch (err) {
+    console.log(err);
     res.sendStatus(500);
   }
 });
