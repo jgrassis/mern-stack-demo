@@ -1,4 +1,1 @@
-{
-    "mongoURI": "mongodb+srv://jgrassis_admin:SzGNkt2vn5pbYqUK@devconnector.xsqntmy.mongodb.net/?appName=devconnector",
-    "jwtSecret":"foobarsecrettoken"
-}
+{}
